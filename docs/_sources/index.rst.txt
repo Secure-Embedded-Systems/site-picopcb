@@ -1,3 +1,4 @@
+.. picopcb
 
 PicoPCB Evaluation Board
 ========================
