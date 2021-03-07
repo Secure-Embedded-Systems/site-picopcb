@@ -10,6 +10,6 @@ PicoPCB Evaluation Board
    :maxdepth: 2
    :caption: Contents:
 
-/pcb
-/picochip
-/famev2
+   /pcb
+   /picochip
+   /famev2
