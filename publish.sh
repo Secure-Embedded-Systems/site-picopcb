@@ -2,4 +2,6 @@
 
 
 make SPHINXOPTS='-t public' html
-touch build/html/.nojekyll
+cp -r build/html/* docs
+touch docs/.nojekyll
+
