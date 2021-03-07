@@ -154,6 +154,145 @@
 <h1>FAMEv2 Chip<a class="headerlink" href="#famev2-chip" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="pinout">
 <h2>Pinout<a class="headerlink" href="#pinout" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="25%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">ASIC Pin Name</th>
+<th class="head">ASIC Pin Number</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>alarm1_emsensor
+alarm2_aesenc
+alarm3_aesdec
+alarmin C6
+alarmout
+boot_select
+check1
+check2
+check3
+clk
+clkout
+dsuact
+dsubre
+dsuen
+dsutx1
+dsurx1
+dsutx2
+dsurx2
+errorn
+extsave
+gpio0
+gpio1
+gpio2
+gpio3
+reset
+txd1
+rxd1
+scanin
+scanout
+spi_csn
+spi_mosi
+spi_sck
+spio_miso
+testen
+triggerout0
+triggerout1
+triggerout2
+triggerout3
+vdd
+vddio
+vss
+vssio
+wdogn</td>
+<td>K1
+A11
+M12
+P7.4
+D2
+L1
+K2
+K3
+J1
+K7
+M2
+L4
+D10
+A8
+H12
+C11
+H10
+D12
+B7
+L6
+B3
+C3
+A4
+C4
+G11
+M3
+F10
+L8
+M7
+L10
+M11
+L12
+A12
+C1
+F2
+G3
+G1
+H2
+E11, J11, M9, M5, J3, E3, B5, C8
+B12, L2, A1, A2
+F12, K12, K9, K5, J2, E1, A6, B9
+C12, M1, B1, A3
+A10</td>
+<td><p class="first">Single pin Header output
+Single pin Header output
+Single pin Header output
+Jumper with GPIO0 to test TRAP HANDLER
+SMA
+VCC GND array on-chip/off-chip boot source select(0=on-chip, 1=offchip)
+VCC GND array
+VCC GND array
+Single pin Header output
+Jumper select between on board, external(SMA)
+SMA
+LED
+VCC GND array (DNP) need to be set to value of 0
+VCC GND array (DNP) need to set to value of 1
+PC
+PC</p>
+<p>LED &amp; MSP LED only
+Jumper with Alarmout
+Single pin Header output
+Single pin Header output
+Single pin Header output
+Single pin Header output</p>
+<p>PC
+PC
+connect to pin Header
+connect to pin Header
+To Flash
+To Flash and external programming header
+To Flash and external programming header
+To Flash and external programming header
+VCC GND array (DNP) need to connect to GND
+SMA + Header
+SMA + Header
+SMA + Header
+SMA + Header</p>
+<p class="last">MSP + 1 pin header input, remove MSP</p>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="bonding">
 <h2>Bonding<a class="headerlink" href="#bonding" title="Permalink to this headline">¶</a></h2>
