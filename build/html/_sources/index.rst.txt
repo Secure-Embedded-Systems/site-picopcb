@@ -1,6 +1,6 @@
 
-PicoPCB Evaluation Bosard
-=========================
+PicoPCB Evaluation Board
+========================
 
 * :doc:`PCB </pcb>`
 * :doc:`PicoChip </picochip>`
