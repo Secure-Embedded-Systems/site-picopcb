@@ -13,9 +13,9 @@ Pinout
 | ASIC Pin Name          | ASIC Pin Number                  | Description                                                                    |
 +========================+==================================+================================================================================+
 | alarm1_emsensor        |K1                                | Single pin Header output                                                       |
-| alarm2_aesenc          |A11                               | Single pin Header output                                                       |  
-| alarm3_aesdec          |M12                               | Single pin Header output                                                       |  
-| alarmin C6             |P7.4                              | Jumper with GPIO0 to test TRAP HANDLER                                         |    
+| alarm2_aesenc          |A11                               | Single pin Header output                                                       |
+| alarm3_aesdec          |M12                               | Single pin Header output                                                       |
+| alarmin C6             |P7.4                              | Jumper with GPIO0 to test TRAP HANDLER                                         |
 | alarmout               |D2                                | SMA                                                                            |
 | boot_select            |L1                                | VCC GND array on-chip/off-chip boot source select(0=on-chip, 1=offchip)        |
 | check1                 |K2                                | VCC GND array                                                                  |
@@ -54,7 +54,7 @@ Pinout
 | vddio                  |B12, L2, A1, A2                   |                                                                                |
 | vss                    |F12, K12, K9, K5, J2, E1, A6, B9  |                                                                                |
 | vssio                  |C12, M1, B1, A3                   |                                                                                |
-| wdogn                  |A10                               | MSP + 1 pin header input, remove MSP                                           |
+| wdogn                  |A10                               |                                                                                |
 +------------------------+----------------------------------+--------------------------------------------------------------------------------+
 
  
