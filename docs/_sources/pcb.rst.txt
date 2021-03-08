@@ -5,11 +5,11 @@
 PicoChip/FameV2 Test PCB
 ========================
 
-Block Diagram
-"""""""""""""
+Overview
+""""""""
 
 .. figure:: images/pcbblockdiagram.png
-   :figwidth: 300px
+   :figwidth: 600px
    :align: center
 
    Picochip PCB Block Diagram
