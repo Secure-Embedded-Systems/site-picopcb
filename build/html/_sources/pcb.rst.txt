@@ -8,7 +8,7 @@ PicoChip/FameV2 Test PCB
 Block Diagram
 """""""""""""
 
-.. figure: images/pcbblockdiagram.png
+.. figure:: images/pcbblockdiagram.png
    :figwidth: 300px
    :align: center
 
