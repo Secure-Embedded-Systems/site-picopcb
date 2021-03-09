@@ -113,6 +113,7 @@ Jumper Settings
 | P38    | 1x3     | FTDI User TX mux FAME/PICO                 |
 +--------+---------+--------------------------------------------+
 
+* P2: This jumper selects between a constant regulated voltage supply and a variable one. One of these two selections MUST be made for the board. The variable voltage supply can be adjusted using the ADJ potentiometer on the left of the jumper.
 
 
 
