@@ -1,7 +1,7 @@
 .. picopcb
 
-PicoPCB Evaluation Board
-========================
+The PicoPCB Evaluation Board works
+==================================
 
 * :doc:`PCB </pcb>`
 * :doc:`PicoChip </picochip>`
