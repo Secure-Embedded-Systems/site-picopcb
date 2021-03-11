@@ -10,6 +10,22 @@ Overview
 
 * The PicoPCB is a test platform for two different chips: FAMEv2 and Picochip. PicoPCB provides the following support functionality for testing FAMEv2 and Picochip: progammable clock generation, power control, passive power measurement, flash programming, user UART.
 
+* PicoPCB has some initial configurations have to be made before the power up. These configurations decide several modes of operation. The configurations are power supply mode, clocking mode, FAMEv2 booting, flasing the chips and setting the UART channels. These configurations are made with switcher headers. Switching can be made by shorting the necessary two headers on the connector as shown in the following figure. Each of these headers are also explained below. Ayntime when the user wants to change a direction of a switching header, the PicoPCB should be turned off and should be turned on after making the changes.
+
+.. figure:: images/shorting.png
+   :figwidth: 600px
+   :align: center
+
+   Switching header shorting directions
+
+* Before the power up, at least the following configurations must be done: power mode, clocking and chip flashing.
+
+* PicoPCB has two regulators supplying the board. These regulators provide 3.3V and 1.8V outputs. 3.3V output is used for chip I/Os and the rest of the board while the 1.8V output is used for chip cores. 1.8V output is configurable using a switching header and a potentiometer. The output is fixed to 1.8V as default. When the user wants to supply the chip cores other than a 1.8V output, the shorting jumper should be placed leftward and the output voltage can be adjusted between 1V and 2V using the potentiometer with a screwdriver. In either case, there MUST be a shorting jumper on this switching header, otherwise the output will be floating. 
+
+* Picochip has two clock sources that can be swithced between for different applications. One clock source is an SMA connector. This connector is able to supply both chips. In order to supply a chip using this connector, the user should place a shorting jumper downwards on the the related swithcer header. Also, placing the jumper upwards means the chip is supplied from the clocking IC. There is a switcher header for each chip. On the clocking IC, two different clock channels supply each of these swithces. On the other hand, one SMA connector supplies both switches.
+
+* PicoPCB has an FTDI FT4232HL USB bridge to handle the clocking IC configuration, user UART communication, DSU UART communication and flash ICs configurations. The configuration of the clocking IC is made via an I2C line, FTDI is able to provide necessary I2C transactions with its MPSSE engine to set the clocking IC. Another FTDI channel is the one that is used for user UART communications from both chips, this is a single channel and must be configured using the swithces to select the communicating chip. One other channel is used for DSU UART of FAMEv2 chip. As the FAMEv2 has two DSU UARTs there are two swiching headers to select the one for communication. The last cannel of the FTDI is used for flash ICs. This line is an SPI line supplying both chips. When the user wants to load a program into a flash IC, the switcing headers around that flash IC must be shorted in the direction of FT signs (if the switching headers are shorted in the direction of FLASH signs, this means that the flash IC is connected to the chip(FAME of PICO) instead of the FTDI device). This will connect that flash IC to the FT device. While making these configurations at one side of the PCB, the shorting jumpers around the other flash IC must be completely removed to keep that IC out of the communication.
+
 * PicoPCB Schematics: :download:`PDF <pdf/pico_pcb_1.0.pdf>`
 
 .. figure:: images/pcbblockdiagram.png
