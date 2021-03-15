@@ -88,9 +88,9 @@ Jumper Settings
 +--------+---------+--------------------------------------------+
 | P18    | 2x4     | FAME TRIG pins                             |
 +--------+---------+--------------------------------------------+
-| P19    | 1x3     | FAME User Uart Rx1/Rx2 select              |
+| P19    | 1x3     | FAME DSU Uart Rx1/Rx2 select               |
 +--------+---------+--------------------------------------------+
-| P20    | 1x3     | FAME User Uart Tx1/Tx2 select              |
+| P20    | 1x3     | FAME DSU Uart Tx1/Tx2 select               |
 +--------+---------+--------------------------------------------+
 | P21    | 1x3     | FAME/FTDI Flash select CK                  |
 +--------+---------+--------------------------------------------+
@@ -129,9 +129,63 @@ Jumper Settings
 | P38    | 1x3     | FTDI User TX mux FAME/PICO                 |
 +--------+---------+--------------------------------------------+
 
+* P1: This is the main power input for a 5 VDC. The connector size is 2.5mm - 5.5mm. Absolute maximum voltage can be applied is 18 VDC but applying other than 5 VDC is not recommended.
+
 * P2: This jumper selects between a constant regulated voltage supply and a variable one. One of these two selections MUST be made for the board. The variable voltage supply can be adjusted using the ADJ potentiometer on the left of the jumper.
 
+* P3: PICO GPIO external access headers. 3.3V and ground are also available.
 
+* P4: PICO SPI external access headers. 3.3V and ground are also available.
+
+* P5: PICO RO control external headers. 3.3V and ground are also available.
+      
+* P6: PICO flash IC's external access headers for D2 and D3. This is the only accesible point for these nets.
+     
+* P7: PICO TRNG and RO external access headers.
+     
+* P8-11: PICO Flash IC's header switches. Downwards shortings will connect flash IC to PICO and upwards shortings will connect it to FTDI bridge.
+     
+* P13: This header is connected to PICO TEST_EN pin. There is also a ground connection for shorting.
+     
+* P14: FAME ALARM external access headers. 3.3V and ground are also available.
+
+* P15: FAME GPIO  external access headers. 3.3V and ground are also available.
+
+* P16: FAME CHECK external access headers. 3.3V and ground are also available.
+
+* P17: FAME SCAN  external access headers. 3.3V and ground are also available.
+
+* P18: FAME TRIG  external access headers. 3.3V and ground are also available.
+     
+* P19: FAME User UARTS' rx pins. Shorting rightwards will connect DSU UART2 to FTDI, leftwards will connect DSU UART1 to FTDI.  
+     
+* P20: FAME User UARTS' tx pins. Shorting rightwards will connect DSU UART2 to FTDI, leftwards will connect DSU UART1 to FTDI.
+     
+* P21-24: FAME Flash IC's header switches. Downwards shortings will connect flash IC to FAME and upwards shortings will connect it to FTDI bridge.
+     
+* P25: FAME flash IC's reset header.
+     
+* P26: Micro B type USB connector. This connector is connected to the FTDI bridge. The connector does not supply power for the board, board must be externally supplied. Also This connector does not supply voltage to the other side of the connection too (Although it is generally a computer). Both ends of the connection must be supplied externally.
+     
+* P27: FAME shunt resistor bypass. Shorting these headers will disable the power monitoring feature.
+
+* P28: PICO shunt resistor bypass. Shorting these headers will disable the power monitoring feature.
+     
+* P29: These headers are connected to global reset and ground. If the reset wanted to be stay active for a long time, these headers can be shorted. Functionally identical with the reset button. 
+     
+* P30: Clocking IC I2C headers for external access, in case of an FTDI failure, these headers can be used to externally program the IC.
+     
+* P31: FAME boot select, can be shorted to ground or 3.3V. 
+     
+* P32: This is the raw output of 1.8V regulator to perform power checks before the voltage gets dropped by other components.
+
+* P33: Clock select for PICO. Shorting downwards will connect external SMA clock to PICO, shorting upwards will connect CLK_1 of clocking IC to PICO. 
+
+* P36: Clock select for FAME. Shorting downwards will connect external SMA clock to FAME, shorting upwards will connect CLK_2 of clocking IC to FAME.
+
+* P37: User UART select for tx. Shorting rightwards will select FAME and shorting leftwards will select PICO. 
+
+* P38: User UART select for rx. Shorting rightwards will select FAME and shorting leftwards will select PICO. 
 
 
 SNA Connectors
