@@ -82,6 +82,10 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="pcb.html">PicoPCB</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">PicoChip</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#programming-picochip-s-program-memory">Programming Picochip’s Program Memory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#generating-the-programmable-file">Generating the programmable file:</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="famev2.html">FAMEv2 Chip</a></li>
 </ul>
 
@@ -147,8 +151,290 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="picochip">
+  <p>. picopcb</p>
+<div class="section" id="picochip">
 <span id="id1"></span><h1>PicoChip<a class="headerlink" href="#picochip" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="programming-picochip-s-program-memory">
+<h1>Programming Picochip’s Program Memory<a class="headerlink" href="#programming-picochip-s-program-memory" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="generating-the-programmable-file">
+<h2>Generating the programmable file:<a class="headerlink" href="#generating-the-programmable-file" title="Permalink to this headline">¶</a></h2>
+<p>Picochip uses the open-source PicoRV32 processor which implements the RISC-V RV32IMC Instruction Set. To generate the programmable file, an installation of the RISC-V GNU toolchain is required. The source files and instructions to install the toolchain can be found in <a class="reference external" href="https://github.com/riscv/riscv-gnu-toolchain">the RISC-V GNU Compiler Toolchain GitHub repository</a>
+.</p>
+<p>After installing the compiler toolchain, the linker script file should be generated to tell the linker which addresses are used for the data memory and which are for the program memory. For this purpose, copy the following to a file named sections.lds:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#ifdef PICOCHIP</span>
+<span class="c1">#  define MEM_TOTAL 0x10000 /* 64 KB */</span>
+<span class="c1">#elif ICEBREAKER</span>
+<span class="c1">#  define MEM_TOTAL 0x20000 /* 128 KB */</span>
+<span class="c1">#elif HX8KDEMO</span>
+<span class="c1">#  define MEM_TOTAL 0x200 /* 2 KB */</span>
+<span class="c1">#else</span>
+<span class="c1">#  error &quot;Set -DICEBREAKER or -DHX8KDEMO when compiling firmware.c&quot;</span>
+<span class="c1">#endif</span>
+
+<span class="n">MEMORY</span>
+<span class="p">{</span>
+        <span class="n">FLASH</span> <span class="p">(</span><span class="n">rx</span><span class="p">)</span>      <span class="p">:</span> <span class="n">ORIGIN</span> <span class="o">=</span> <span class="mh">0x00100000</span><span class="p">,</span> <span class="n">LENGTH</span> <span class="o">=</span> <span class="mh">0x400000</span> <span class="o">/*</span> <span class="n">entire</span> <span class="n">flash</span><span class="p">,</span> <span class="mi">4</span> <span class="n">MiB</span> <span class="o">*/</span>
+        <span class="n">RAM</span> <span class="p">(</span><span class="n">xrw</span><span class="p">)</span>       <span class="p">:</span> <span class="n">ORIGIN</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">,</span> <span class="n">LENGTH</span> <span class="o">=</span> <span class="n">MEM_TOTAL</span>
+<span class="p">}</span>
+
+<span class="n">SECTIONS</span> <span class="p">{</span>
+        <span class="o">/*</span> <span class="n">The</span> <span class="n">program</span> <span class="n">code</span> <span class="ow">and</span> <span class="n">other</span> <span class="n">data</span> <span class="n">goes</span> <span class="n">into</span> <span class="n">FLASH</span> <span class="o">*/</span>
+        <span class="o">.</span><span class="n">text</span> <span class="p">:</span>
+        <span class="p">{</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>           <span class="o">/*</span> <span class="o">.</span><span class="n">text</span> <span class="n">sections</span> <span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">*/</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">text</span><span class="o">*</span><span class="p">)</span>          <span class="o">/*</span> <span class="o">.</span><span class="n">text</span><span class="o">*</span> <span class="n">sections</span> <span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">*/</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">rodata</span><span class="p">)</span>         <span class="o">/*</span> <span class="o">.</span><span class="n">rodata</span> <span class="n">sections</span> <span class="p">(</span><span class="n">constants</span><span class="p">,</span> <span class="n">strings</span><span class="p">,</span> <span class="n">etc</span><span class="o">.</span><span class="p">)</span> <span class="o">*/</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">rodata</span><span class="o">*</span><span class="p">)</span>        <span class="o">/*</span> <span class="o">.</span><span class="n">rodata</span><span class="o">*</span> <span class="n">sections</span> <span class="p">(</span><span class="n">constants</span><span class="p">,</span> <span class="n">strings</span><span class="p">,</span> <span class="n">etc</span><span class="o">.</span><span class="p">)</span> <span class="o">*/</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">srodata</span><span class="p">)</span>        <span class="o">/*</span> <span class="o">.</span><span class="n">rodata</span> <span class="n">sections</span> <span class="p">(</span><span class="n">constants</span><span class="p">,</span> <span class="n">strings</span><span class="p">,</span> <span class="n">etc</span><span class="o">.</span><span class="p">)</span> <span class="o">*/</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">srodata</span><span class="o">*</span><span class="p">)</span>       <span class="o">/*</span> <span class="o">.</span><span class="n">rodata</span><span class="o">*</span> <span class="n">sections</span> <span class="p">(</span><span class="n">constants</span><span class="p">,</span> <span class="n">strings</span><span class="p">,</span> <span class="n">etc</span><span class="o">.</span><span class="p">)</span> <span class="o">*/</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="n">_etext</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>        <span class="o">/*</span> <span class="n">define</span> <span class="n">a</span> <span class="k">global</span> <span class="n">symbol</span> <span class="n">at</span> <span class="n">end</span> <span class="n">of</span> <span class="n">code</span> <span class="o">*/</span>
+                <span class="n">_sidata</span> <span class="o">=</span> <span class="n">_etext</span><span class="p">;</span>  <span class="o">/*</span> <span class="n">This</span> <span class="ow">is</span> <span class="n">used</span> <span class="n">by</span> <span class="n">the</span> <span class="n">startup</span> <span class="ow">in</span> <span class="n">order</span> <span class="n">to</span> <span class="n">initialize</span> <span class="n">the</span> <span class="o">.</span><span class="n">data</span> <span class="n">secion</span> <span class="o">*/</span>
+        <span class="p">}</span> <span class="o">&gt;</span><span class="n">FLASH</span>
+
+
+        <span class="o">/*</span> <span class="n">This</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">initialized</span> <span class="n">data</span> <span class="n">section</span>
+        <span class="n">The</span> <span class="n">program</span> <span class="n">executes</span> <span class="n">knowing</span> <span class="n">that</span> <span class="n">the</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">RAM</span>
+        <span class="n">but</span> <span class="n">the</span> <span class="n">loader</span> <span class="n">puts</span> <span class="n">the</span> <span class="n">initial</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">FLASH</span> <span class="p">(</span><span class="n">inidata</span><span class="p">)</span><span class="o">.</span>
+        <span class="n">It</span> <span class="ow">is</span> <span class="n">one</span> <span class="n">task</span> <span class="n">of</span> <span class="n">the</span> <span class="n">startup</span> <span class="n">to</span> <span class="n">copy</span> <span class="n">the</span> <span class="n">initial</span> <span class="n">values</span> <span class="kn">from</span> <span class="nn">FLASH</span> <span class="n">to</span> <span class="n">RAM</span><span class="o">.</span> <span class="o">*/</span>
+        <span class="o">.</span><span class="n">data</span> <span class="p">:</span> <span class="n">AT</span> <span class="p">(</span> <span class="n">_sidata</span> <span class="p">)</span>
+        <span class="p">{</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="n">_sdata</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>        <span class="o">/*</span> <span class="n">create</span> <span class="n">a</span> <span class="k">global</span> <span class="n">symbol</span> <span class="n">at</span> <span class="n">data</span> <span class="n">start</span><span class="p">;</span> <span class="n">used</span> <span class="n">by</span> <span class="n">startup</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">order</span> <span class="n">to</span> <span class="n">initialise</span> <span class="n">the</span> <span class="o">.</span><span class="n">data</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">RAM</span> <span class="o">*/</span>
+                <span class="n">_ram_start</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>    <span class="o">/*</span> <span class="n">create</span> <span class="n">a</span> <span class="k">global</span> <span class="n">symbol</span> <span class="n">at</span> <span class="n">ram</span> <span class="n">start</span> <span class="k">for</span> <span class="n">garbage</span> <span class="n">collector</span> <span class="o">*/</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>           <span class="o">/*</span> <span class="o">.</span><span class="n">data</span> <span class="n">sections</span> <span class="o">*/</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">data</span><span class="o">*</span><span class="p">)</span>          <span class="o">/*</span> <span class="o">.</span><span class="n">data</span><span class="o">*</span> <span class="n">sections</span> <span class="o">*/</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">sdata</span><span class="p">)</span>           <span class="o">/*</span> <span class="o">.</span><span class="n">sdata</span> <span class="n">sections</span> <span class="o">*/</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">sdata</span><span class="o">*</span><span class="p">)</span>          <span class="o">/*</span> <span class="o">.</span><span class="n">sdata</span><span class="o">*</span> <span class="n">sections</span> <span class="o">*/</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="n">_edata</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>        <span class="o">/*</span> <span class="n">define</span> <span class="n">a</span> <span class="k">global</span> <span class="n">symbol</span> <span class="n">at</span> <span class="n">data</span> <span class="n">end</span><span class="p">;</span> <span class="n">used</span> <span class="n">by</span> <span class="n">startup</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">order</span> <span class="n">to</span> <span class="n">initialise</span> <span class="n">the</span> <span class="o">.</span><span class="n">data</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">RAM</span> <span class="o">*/</span>
+        <span class="p">}</span> <span class="o">&gt;</span><span class="n">RAM</span>
+
+        <span class="o">/*</span> <span class="n">Uninitialized</span> <span class="n">data</span> <span class="n">section</span> <span class="o">*/</span>
+        <span class="o">.</span><span class="n">bss</span> <span class="p">:</span>
+        <span class="p">{</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="n">_sbss</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>         <span class="o">/*</span> <span class="n">define</span> <span class="n">a</span> <span class="k">global</span> <span class="n">symbol</span> <span class="n">at</span> <span class="n">bss</span> <span class="n">start</span><span class="p">;</span> <span class="n">used</span> <span class="n">by</span> <span class="n">startup</span> <span class="n">code</span> <span class="o">*/</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">bss</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">bss</span><span class="o">*</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">sbss</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">sbss</span><span class="o">*</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="n">COMMON</span><span class="p">)</span>
+
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="n">_ebss</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>         <span class="o">/*</span> <span class="n">define</span> <span class="n">a</span> <span class="k">global</span> <span class="n">symbol</span> <span class="n">at</span> <span class="n">bss</span> <span class="n">end</span><span class="p">;</span> <span class="n">used</span> <span class="n">by</span> <span class="n">startup</span> <span class="n">code</span> <span class="o">*/</span>
+        <span class="p">}</span> <span class="o">&gt;</span><span class="n">RAM</span>
+
+        <span class="o">/*</span> <span class="n">this</span> <span class="ow">is</span> <span class="n">to</span> <span class="n">define</span> <span class="n">the</span> <span class="n">start</span> <span class="n">of</span> <span class="n">the</span> <span class="n">heap</span><span class="p">,</span> <span class="ow">and</span> <span class="n">make</span> <span class="n">sure</span> <span class="n">we</span> <span class="n">have</span> <span class="n">a</span> <span class="n">minimum</span> <span class="n">size</span> <span class="o">*/</span>
+        <span class="o">.</span><span class="n">heap</span> <span class="p">:</span>
+        <span class="p">{</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="n">_heap_start</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>    <span class="o">/*</span> <span class="n">define</span> <span class="n">a</span> <span class="k">global</span> <span class="n">symbol</span> <span class="n">at</span> <span class="n">heap</span> <span class="n">start</span> <span class="o">*/</span>
+        <span class="p">}</span> <span class="o">&gt;</span><span class="n">RAM</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Then, run the following command:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">riscv32</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">cpp</span> <span class="o">-</span><span class="n">P</span> <span class="o">-</span><span class="n">D</span> <span class="n">PICOCHIP</span> <span class="o">-</span><span class="n">o</span> <span class="n">picochip_sections</span><span class="o">.</span><span class="n">lds</span> <span class="n">sections</span><span class="o">.</span><span class="n">lds</span>
+</pre></div>
+</div>
+<p>This will generate the linker script for Picochip (picochip_sections.lds) which should look similar to code shown below:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MEMORY</span>
+<span class="p">{</span>
+        <span class="n">FLASH</span> <span class="p">(</span><span class="n">rx</span><span class="p">)</span> <span class="p">:</span> <span class="n">ORIGIN</span> <span class="o">=</span> <span class="mh">0x00100000</span><span class="p">,</span> <span class="n">LENGTH</span> <span class="o">=</span> <span class="mh">0x400000</span>
+        <span class="n">RAM</span> <span class="p">(</span><span class="n">xrw</span><span class="p">)</span> <span class="p">:</span> <span class="n">ORIGIN</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">,</span> <span class="n">LENGTH</span> <span class="o">=</span> <span class="mh">0x10000</span>
+<span class="p">}</span>
+<span class="n">SECTIONS</span> <span class="p">{</span>
+        <span class="o">.</span><span class="n">text</span> <span class="p">:</span>
+        <span class="p">{</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">text</span><span class="o">*</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">rodata</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">rodata</span><span class="o">*</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">srodata</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">srodata</span><span class="o">*</span><span class="p">)</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="n">_etext</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+                <span class="n">_sidata</span> <span class="o">=</span> <span class="n">_etext</span><span class="p">;</span>
+        <span class="p">}</span> <span class="o">&gt;</span><span class="n">FLASH</span>
+        <span class="o">.</span><span class="n">data</span> <span class="p">:</span> <span class="n">AT</span> <span class="p">(</span> <span class="n">_sidata</span> <span class="p">)</span>
+        <span class="p">{</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="n">_sdata</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+                <span class="n">_ram_start</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">data</span><span class="o">*</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">sdata</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">sdata</span><span class="o">*</span><span class="p">)</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="n">_edata</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+        <span class="p">}</span> <span class="o">&gt;</span><span class="n">RAM</span>
+        <span class="o">.</span><span class="n">bss</span> <span class="p">:</span>
+        <span class="p">{</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="n">_sbss</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">bss</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">bss</span><span class="o">*</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">sbss</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">sbss</span><span class="o">*</span><span class="p">)</span>
+                <span class="o">*</span><span class="p">(</span><span class="n">COMMON</span><span class="p">)</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="n">_ebss</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+        <span class="p">}</span> <span class="o">&gt;</span><span class="n">RAM</span>
+        <span class="o">.</span><span class="n">heap</span> <span class="p">:</span>
+        <span class="p">{</span>
+                <span class="o">.</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                <span class="n">_heap_start</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+        <span class="p">}</span> <span class="o">&gt;</span><span class="n">RAM</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The last file needed to generate the final programmable binary is the boot code. The following is a simple boot code to initialize the memory sections and start fetching the code from the FLASH memory. Save them in start.s.</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">section</span> <span class="o">.</span><span class="n">text</span>
+
+<span class="n">start</span><span class="p">:</span>
+
+<span class="c1"># zero-initialize register file</span>
+<span class="n">addi</span> <span class="n">x1</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="c1"># x2 (sp) is initialized by reset</span>
+<span class="n">addi</span> <span class="n">x3</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x4</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x5</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x6</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x7</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x8</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x9</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x10</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x11</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x12</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x13</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x14</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x15</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x16</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x17</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x18</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x19</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x20</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x21</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x22</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x23</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x24</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x25</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x26</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x27</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x28</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x29</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x30</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">addi</span> <span class="n">x31</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span>
+
+<span class="c1"># copy data section</span>
+<span class="n">la</span> <span class="n">a0</span><span class="p">,</span> <span class="n">_sidata</span>
+<span class="n">la</span> <span class="n">a1</span><span class="p">,</span> <span class="n">_sdata</span>
+<span class="n">la</span> <span class="n">a2</span><span class="p">,</span> <span class="n">_edata</span>
+<span class="n">bge</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">end_init_data</span>
+<span class="n">loop_init_data</span><span class="p">:</span>
+<span class="n">lw</span> <span class="n">a3</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">a0</span><span class="p">)</span>
+<span class="n">sw</span> <span class="n">a3</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">a1</span><span class="p">)</span>
+<span class="n">addi</span> <span class="n">a0</span><span class="p">,</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">4</span>
+<span class="n">addi</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="mi">4</span>
+<span class="n">blt</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">loop_init_data</span>
+<span class="n">end_init_data</span><span class="p">:</span>
+
+<span class="c1"># zero-init bss section</span>
+<span class="n">la</span> <span class="n">a0</span><span class="p">,</span> <span class="n">_sbss</span>
+<span class="n">la</span> <span class="n">a1</span><span class="p">,</span> <span class="n">_ebss</span>
+<span class="n">bge</span> <span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">end_init_bss</span>
+<span class="n">loop_init_bss</span><span class="p">:</span>
+<span class="n">sw</span> <span class="n">zero</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">a0</span><span class="p">)</span>
+<span class="n">addi</span> <span class="n">a0</span><span class="p">,</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">4</span>
+<span class="n">blt</span> <span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">loop_init_bss</span>
+<span class="n">end_init_bss</span><span class="p">:</span>
+
+<span class="c1"># call main</span>
+<span class="n">call</span> <span class="n">main</span>
+<span class="n">loop</span><span class="p">:</span>
+<span class="n">j</span> <span class="n">loop</span>
+
+<span class="o">.</span><span class="k">global</span> <span class="n">flashio_worker_begin</span>
+<span class="o">.</span><span class="k">global</span> <span class="n">flashio_worker_end</span>
+
+<span class="o">.</span><span class="n">balign</span> <span class="mi">4</span>
+
+<span class="n">flashio_worker_begin</span><span class="p">:</span>
+<span class="c1"># a0 ... data pointer</span>
+<span class="c1"># a1 ... data length</span>
+<span class="c1"># a2 ... optional WREN cmd (0 = disable)</span>
+
+<span class="c1"># address of SPI ctrl reg</span>
+<span class="n">li</span>   <span class="n">t0</span><span class="p">,</span> <span class="mh">0x02000000</span>
+
+<span class="c1"># Set CS high, IO0 is output</span>
+<span class="n">li</span>   <span class="n">t1</span><span class="p">,</span> <span class="mh">0x120</span>
+<span class="n">sh</span>   <span class="n">t1</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+
+<span class="c1"># Enable Manual SPI Ctrl</span>
+<span class="n">sb</span>   <span class="n">zero</span><span class="p">,</span> <span class="mi">3</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+
+<span class="c1"># Send optional WREN cmd</span>
+<span class="n">beqz</span> <span class="n">a2</span><span class="p">,</span> <span class="n">flashio_worker_L1</span>
+<span class="n">li</span>   <span class="n">t5</span><span class="p">,</span> <span class="mi">8</span>
+<span class="n">andi</span> <span class="n">t2</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="mh">0xff</span>
+<span class="n">flashio_worker_L4</span><span class="p">:</span>
+<span class="n">srli</span> <span class="n">t4</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="mi">7</span>
+<span class="n">sb</span>   <span class="n">t4</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+<span class="n">ori</span>  <span class="n">t4</span><span class="p">,</span> <span class="n">t4</span><span class="p">,</span> <span class="mh">0x10</span>
+<span class="n">sb</span>   <span class="n">t4</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+<span class="n">slli</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="mi">1</span>
+<span class="n">andi</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="mh">0xff</span>
+<span class="n">addi</span> <span class="n">t5</span><span class="p">,</span> <span class="n">t5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+<span class="n">bnez</span> <span class="n">t5</span><span class="p">,</span> <span class="n">flashio_worker_L4</span>
+<span class="n">sb</span>   <span class="n">t1</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+
+<span class="c1"># SPI transfer</span>
+<span class="n">flashio_worker_L1</span><span class="p">:</span>
+<span class="n">beqz</span> <span class="n">a1</span><span class="p">,</span> <span class="n">flashio_worker_L3</span>
+<span class="n">li</span>   <span class="n">t5</span><span class="p">,</span> <span class="mi">8</span>
+<span class="n">lbu</span>  <span class="n">t2</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">a0</span><span class="p">)</span>
+<span class="n">flashio_worker_L2</span><span class="p">:</span>
+<span class="n">srli</span> <span class="n">t4</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="mi">7</span>
+<span class="n">sb</span>   <span class="n">t4</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+<span class="n">ori</span>  <span class="n">t4</span><span class="p">,</span> <span class="n">t4</span><span class="p">,</span> <span class="mh">0x10</span>
+<span class="n">sb</span>   <span class="n">t4</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+<span class="n">lbu</span>  <span class="n">t4</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+<span class="n">andi</span> <span class="n">t4</span><span class="p">,</span> <span class="n">t4</span><span class="p">,</span> <span class="mi">2</span>
+<span class="n">srli</span> <span class="n">t4</span><span class="p">,</span> <span class="n">t4</span><span class="p">,</span> <span class="mi">1</span>
+<span class="n">slli</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="mi">1</span>
+<span class="ow">or</span>   <span class="n">t2</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t4</span>
+<span class="n">andi</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="mh">0xff</span>
+<span class="n">addi</span> <span class="n">t5</span><span class="p">,</span> <span class="n">t5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+<span class="n">bnez</span> <span class="n">t5</span><span class="p">,</span> <span class="n">flashio_worker_L2</span>
+<span class="n">sb</span>   <span class="n">t2</span><span class="p">,</span> <span class="mi">0</span><span class="p">(</span><span class="n">a0</span><span class="p">)</span>
+<span class="n">addi</span> <span class="n">a0</span><span class="p">,</span> <span class="n">a0</span><span class="p">,</span> <span class="mi">1</span>
+<span class="n">addi</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+<span class="n">j</span>    <span class="n">flashio_worker_L1</span>
+<span class="n">flashio_worker_L3</span><span class="p">:</span>
+
+<span class="c1"># Back to MEMIO mode</span>
+<span class="n">li</span>   <span class="n">t1</span><span class="p">,</span> <span class="mh">0x80</span>
+<span class="n">sb</span>   <span class="n">t1</span><span class="p">,</span> <span class="mi">3</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+
+<span class="n">ret</span>
+
+<span class="o">.</span><span class="n">balign</span> <span class="mi">4</span>
+<span class="n">flashio_worker_end</span><span class="p">:</span>
+</pre></div>
+</div>
+<p>Finally, to generate the binary file for a C code firmware.c, run the following commands. The final binary file will be generated in file picochip_fw.hex.</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">riscv32</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">gcc</span>  <span class="o">-</span><span class="n">D</span> <span class="n">PICOCHIP</span> <span class="o">-</span><span class="n">Dmarch</span><span class="o">=</span><span class="n">rv32ic</span> <span class="o">-</span><span class="n">Wl</span><span class="p">,</span><span class="o">-</span><span class="n">Bstatic</span><span class="p">,</span><span class="o">-</span><span class="n">T</span><span class="p">,</span><span class="n">picochip_sections</span><span class="o">.</span><span class="n">lds</span><span class="p">,</span><span class="o">--</span><span class="n">strip</span><span class="o">-</span><span class="n">debug</span> <span class="o">-</span><span class="n">ffreestanding</span> <span class="o">-</span><span class="n">nostdlib</span> <span class="o">-</span><span class="n">o</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">elf</span> <span class="n">start</span><span class="o">.</span><span class="n">s</span> <span class="n">firmware</span><span class="o">.</span><span class="n">c</span>
+<span class="n">riscv32</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">objcopy</span> <span class="o">-</span><span class="n">O</span> <span class="n">verilog</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">elf</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">hex</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
