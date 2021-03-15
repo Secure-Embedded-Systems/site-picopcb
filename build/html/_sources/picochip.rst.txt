@@ -97,7 +97,7 @@ Then, run the following command:
 
     riscv32-unknown-elf-cpp -P -D PICOCHIP -o picochip_sections.lds sections.lds
 
-This will generate the linker script for Picochip (picochip_sections.lds) which should look similar to code shown below:
+This will generate the linker script for Picochip (picochip_sections.lds) which should look similar to the code shown below:
 
 .. code:: bash
 
@@ -152,7 +152,7 @@ This will generate the linker script for Picochip (picochip_sections.lds) which 
 		} >RAM
 	}
 
-The last file needed to generate the final programmable binary is the boot code. The following is a simple boot code to initialize the memory sections and start fetching the code from the FLASH memory. Save them in start.s.
+The last file required to generate the final programmable binary is the boot code. The following is a simple boot code to initialize the memory sections and start fetching the code from the FLASH memory. Save them in a file named start.s.
 
 .. code:: bash
 
@@ -290,7 +290,7 @@ The last file needed to generate the final programmable binary is the boot code.
 	flashio_worker_end:
 
 
-Finally, to generate the binary file for a C code firmware.c, run the following commands. The final binary file will be generated in file picochip_fw.hex.
+Finally, to generate the binary file for a C code firmware.c, run the following commands. The final binary file will be generated in a file named picochip_fw.hex.
 
 
 .. code:: bash

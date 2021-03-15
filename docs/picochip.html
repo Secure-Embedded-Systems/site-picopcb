@@ -242,7 +242,7 @@
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">riscv32</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">cpp</span> <span class="o">-</span><span class="n">P</span> <span class="o">-</span><span class="n">D</span> <span class="n">PICOCHIP</span> <span class="o">-</span><span class="n">o</span> <span class="n">picochip_sections</span><span class="o">.</span><span class="n">lds</span> <span class="n">sections</span><span class="o">.</span><span class="n">lds</span>
 </pre></div>
 </div>
-<p>This will generate the linker script for Picochip (picochip_sections.lds) which should look similar to code shown below:</p>
+<p>This will generate the linker script for Picochip (picochip_sections.lds) which should look similar to the code shown below:</p>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MEMORY</span>
 <span class="p">{</span>
         <span class="n">FLASH</span> <span class="p">(</span><span class="n">rx</span><span class="p">)</span> <span class="p">:</span> <span class="n">ORIGIN</span> <span class="o">=</span> <span class="mh">0x00100000</span><span class="p">,</span> <span class="n">LENGTH</span> <span class="o">=</span> <span class="mh">0x400000</span>
@@ -295,7 +295,7 @@
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The last file needed to generate the final programmable binary is the boot code. The following is a simple boot code to initialize the memory sections and start fetching the code from the FLASH memory. Save them in start.s.</p>
+<p>The last file required to generate the final programmable binary is the boot code. The following is a simple boot code to initialize the memory sections and start fetching the code from the FLASH memory. Save them in a file named start.s.</p>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">section</span> <span class="o">.</span><span class="n">text</span>
 
 <span class="n">start</span><span class="p">:</span>
@@ -430,7 +430,7 @@
 <span class="n">flashio_worker_end</span><span class="p">:</span>
 </pre></div>
 </div>
-<p>Finally, to generate the binary file for a C code firmware.c, run the following commands. The final binary file will be generated in file picochip_fw.hex.</p>
+<p>Finally, to generate the binary file for a C code firmware.c, run the following commands. The final binary file will be generated in a file named picochip_fw.hex.</p>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">riscv32</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">gcc</span>  <span class="o">-</span><span class="n">D</span> <span class="n">PICOCHIP</span> <span class="o">-</span><span class="n">Dmarch</span><span class="o">=</span><span class="n">rv32ic</span> <span class="o">-</span><span class="n">Wl</span><span class="p">,</span><span class="o">-</span><span class="n">Bstatic</span><span class="p">,</span><span class="o">-</span><span class="n">T</span><span class="p">,</span><span class="n">picochip_sections</span><span class="o">.</span><span class="n">lds</span><span class="p">,</span><span class="o">--</span><span class="n">strip</span><span class="o">-</span><span class="n">debug</span> <span class="o">-</span><span class="n">ffreestanding</span> <span class="o">-</span><span class="n">nostdlib</span> <span class="o">-</span><span class="n">o</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">elf</span> <span class="n">start</span><span class="o">.</span><span class="n">s</span> <span class="n">firmware</span><span class="o">.</span><span class="n">c</span>
 <span class="n">riscv32</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">objcopy</span> <span class="o">-</span><span class="n">O</span> <span class="n">verilog</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">elf</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">hex</span>
 </pre></div>
