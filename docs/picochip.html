@@ -81,9 +81,11 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="pcb.html">PicoPCB</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">PicoChip</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#programming-picochip-s-program-memory">Programming Picochip’s Program Memory</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#generating-the-programmable-file">Generating the programmable file:</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PicoChip</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#programming-picochip-s-program-memory">Programming Picochip’s Program Memory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#generating-the-programmable-file">Generating the programmable file:</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="famev2.html">FAMEv2 Chip</a></li>
@@ -154,11 +156,10 @@
   <p>. picopcb</p>
 <div class="section" id="picochip">
 <span id="id1"></span><h1>PicoChip<a class="headerlink" href="#picochip" title="Permalink to this headline">¶</a></h1>
-</div>
 <div class="section" id="programming-picochip-s-program-memory">
-<h1>Programming Picochip’s Program Memory<a class="headerlink" href="#programming-picochip-s-program-memory" title="Permalink to this headline">¶</a></h1>
+<h2>Programming Picochip’s Program Memory<a class="headerlink" href="#programming-picochip-s-program-memory" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="generating-the-programmable-file">
-<h2>Generating the programmable file:<a class="headerlink" href="#generating-the-programmable-file" title="Permalink to this headline">¶</a></h2>
+<h3>Generating the programmable file:<a class="headerlink" href="#generating-the-programmable-file" title="Permalink to this headline">¶</a></h3>
 <p>Picochip uses the open-source PicoRV32 processor which implements the RISC-V RV32IMC Instruction Set. To generate the programmable file, an installation of the RISC-V GNU toolchain is required. The source files and instructions to install the toolchain can be found in <a class="reference external" href="https://github.com/riscv/riscv-gnu-toolchain">the RISC-V GNU Compiler Toolchain GitHub repository</a>
 .</p>
 <p>After installing the compiler toolchain, the linker script file should be generated to tell the linker which addresses are used for the data memory and which are for the program memory. For this purpose, copy the following to a file named sections.lds:</p>
@@ -433,6 +434,7 @@
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">riscv32</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">gcc</span>  <span class="o">-</span><span class="n">D</span> <span class="n">PICOCHIP</span> <span class="o">-</span><span class="n">Dmarch</span><span class="o">=</span><span class="n">rv32ic</span> <span class="o">-</span><span class="n">Wl</span><span class="p">,</span><span class="o">-</span><span class="n">Bstatic</span><span class="p">,</span><span class="o">-</span><span class="n">T</span><span class="p">,</span><span class="n">picochip_sections</span><span class="o">.</span><span class="n">lds</span><span class="p">,</span><span class="o">--</span><span class="n">strip</span><span class="o">-</span><span class="n">debug</span> <span class="o">-</span><span class="n">ffreestanding</span> <span class="o">-</span><span class="n">nostdlib</span> <span class="o">-</span><span class="n">o</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">elf</span> <span class="n">start</span><span class="o">.</span><span class="n">s</span> <span class="n">firmware</span><span class="o">.</span><span class="n">c</span>
 <span class="n">riscv32</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">objcopy</span> <span class="o">-</span><span class="n">O</span> <span class="n">verilog</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">elf</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">hex</span>
 </pre></div>
+</div>
 </div>
 </div>
 </div>

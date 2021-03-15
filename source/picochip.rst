@@ -6,9 +6,10 @@ PicoChip
 ========
 
 Programming Picochip's Program Memory
-===============
-Generating the programmable file:
 ------------------
+
+Generating the programmable file:
+^^^^^^^^^^^^^^^^^^^^^
 Picochip uses the open-source PicoRV32 processor which implements the RISC-V RV32IMC Instruction Set. To generate the programmable file, an installation of the RISC-V GNU toolchain is required. The source files and instructions to install the toolchain can be found in `the RISC-V GNU Compiler Toolchain GitHub repository <https://github.com/riscv/riscv-gnu-toolchain>`_
 .
 
