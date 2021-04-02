@@ -26,7 +26,7 @@ After installing the compiler toolchain, the linker script file should be genera
 	#elif HX8KDEMO
 	#  define MEM_TOTAL 0x200 /* 2 KB */
 	#else
-	#  error "Set -DICEBREAKER or -DHX8KDEMO when compiling firmware.c"
+	#  error "Set -PICOCHIP or -DICEBREAKER or -DHX8KDEMO when compiling firmware.c"
 	#endif
 
 	MEMORY
