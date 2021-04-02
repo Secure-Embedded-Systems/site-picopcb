@@ -357,7 +357,6 @@ Putting all the codes together, the following Makefile can be used:
 
 	truncate:
 		truncate -s 16M fw.bin
-	# 	truncate -s 16777216 fw.bin
 
 	zeros:
 		@truncate -s 1M zeros.bin
