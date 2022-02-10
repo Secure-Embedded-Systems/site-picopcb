@@ -84,7 +84,8 @@
 <li class="toctree-l1"><a class="reference internal" href="pcb2.html">Saidoyoki_v2</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">PicoChip</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#programming-picochip-s-program-memory">Programming Picochip’s Program Memory</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#generating-the-programmable-file">Generating the programmable file:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generating-the-programmable-file">Generating the programmable file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#programming-the-spi-flash">Programming the SPI Flash</a></li>
 </ul>
 </li>
 </ul>
@@ -160,9 +161,9 @@
 <div class="section" id="programming-picochip-s-program-memory">
 <h2>Programming Picochip’s Program Memory<a class="headerlink" href="#programming-picochip-s-program-memory" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="generating-the-programmable-file">
-<h3>Generating the programmable file:<a class="headerlink" href="#generating-the-programmable-file" title="Permalink to this headline">¶</a></h3>
+<h3>Generating the programmable file<a class="headerlink" href="#generating-the-programmable-file" title="Permalink to this headline">¶</a></h3>
 <p>Picochip uses the open-source PicoRV32 processor which implements the RISC-V RV32IMC Instruction Set. To generate the programmable file, an installation of the RISC-V GNU toolchain is required. The source files and instructions to install the toolchain can be found in <a class="reference external" href="https://github.com/riscv/riscv-gnu-toolchain">the RISC-V GNU Compiler Toolchain GitHub repository</a>
-.</p>
+. Make sure to install the toolchain for the 32bit ISA.</p>
 <p>After installing the compiler toolchain, the linker script file should be generated to tell the linker which addresses are used for the data memory and which are for the program memory. For this purpose, copy the following to a file named sections.lds:</p>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#ifdef PICOCHIP</span>
 <span class="c1">#  define MEM_TOTAL 0x10000 /* 64 KB */</span>
@@ -171,7 +172,7 @@
 <span class="c1">#elif HX8KDEMO</span>
 <span class="c1">#  define MEM_TOTAL 0x200 /* 2 KB */</span>
 <span class="c1">#else</span>
-<span class="c1">#  error &quot;Set -DICEBREAKER or -DHX8KDEMO when compiling firmware.c&quot;</span>
+<span class="c1">#  error &quot;Set -PICOCHIP or -DICEBREAKER or -DHX8KDEMO when compiling firmware.c&quot;</span>
 <span class="c1">#endif</span>
 
 <span class="n">MEMORY</span>
@@ -431,9 +432,63 @@
 <span class="n">flashio_worker_end</span><span class="p">:</span>
 </pre></div>
 </div>
-<p>Finally, to generate the binary file for a C code firmware.c, run the following commands. The final binary file will be generated in a file named picochip_fw.hex.</p>
+<p>Finally, to generate the binary file for a C code firmware.c, run the following commands. The final binary file will be generated in a file named picochip_fw.bin.</p>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">riscv32</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">gcc</span>  <span class="o">-</span><span class="n">D</span> <span class="n">PICOCHIP</span> <span class="o">-</span><span class="n">Dmarch</span><span class="o">=</span><span class="n">rv32ic</span> <span class="o">-</span><span class="n">Wl</span><span class="p">,</span><span class="o">-</span><span class="n">Bstatic</span><span class="p">,</span><span class="o">-</span><span class="n">T</span><span class="p">,</span><span class="n">picochip_sections</span><span class="o">.</span><span class="n">lds</span><span class="p">,</span><span class="o">--</span><span class="n">strip</span><span class="o">-</span><span class="n">debug</span> <span class="o">-</span><span class="n">ffreestanding</span> <span class="o">-</span><span class="n">nostdlib</span> <span class="o">-</span><span class="n">o</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">elf</span> <span class="n">start</span><span class="o">.</span><span class="n">s</span> <span class="n">firmware</span><span class="o">.</span><span class="n">c</span>
-<span class="n">riscv32</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">objcopy</span> <span class="o">-</span><span class="n">O</span> <span class="n">verilog</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">elf</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">hex</span>
+<span class="n">riscv32</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">objcopy</span> <span class="o">-</span><span class="n">O</span> <span class="n">binary</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">elf</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">bin</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="programming-the-spi-flash">
+<h3>Programming the SPI Flash<a class="headerlink" href="#programming-the-spi-flash" title="Permalink to this headline">¶</a></h3>
+<p>To program the flash, two main adjustments should be made to the binary file. First, the on-chip processor expects the first instruction to be located at 1MB deep in the SPI flash (address 0x00100000). Therefore, we need to add non-values (zeros) to the first 1MB part of the binary file. Second, the SPI flash used on picopcb (W25Q128JV-DTR) is 16MB deep. Therefore, we need to pad the binary file to be exactly 16MB. To make these adjustments, on Linux, we use the <a class="reference external" href="https://www.man7.org/linux/man-pages/man1/truncate.1.html">truncate</a> command as follows:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">truncate</span> <span class="o">-</span><span class="n">s</span> <span class="mi">1</span><span class="n">M</span> <span class="n">zeros</span><span class="o">.</span><span class="n">bin</span>
+<span class="n">cat</span> <span class="n">zeros</span><span class="o">.</span><span class="n">bin</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">bin</span> <span class="o">&gt;</span> <span class="n">concat</span><span class="o">.</span><span class="n">bin</span>
+<span class="n">truncate</span> <span class="o">-</span><span class="n">s</span> <span class="mi">16</span><span class="n">M</span> <span class="n">concat</span><span class="o">.</span><span class="n">bin</span>
+<span class="n">rm</span> <span class="n">zeros</span><span class="o">.</span><span class="n">bin</span>
+</pre></div>
+</div>
+<p>Using the above commands, we will have the new binary file (concat.bin) which is exactly 16MB and the starting code is at the address 0x00100000.</p>
+<p>To program the SPI flash (Picochip’s program memory) on a Linux system, the <a class="reference external" href="https://linux.die.net/man/8/flashrom">flashrom</a> utility is used. In order to not write the entire 16MB of flash (and speed up the programming) we use a layout file (picochip.layout) as below:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">00000000</span><span class="p">:</span><span class="mi">000</span><span class="n">fffff</span> <span class="n">start</span>
+<span class="mi">00100000</span><span class="p">:</span><span class="mi">001</span><span class="n">fffff</span> <span class="n">program</span>
+<span class="mi">00200000</span><span class="p">:</span><span class="mi">00</span><span class="n">ffffff</span> <span class="n">remainder</span>
+</pre></div>
+</div>
+<p>Finally, to write to the SPI flash, use the following command:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">flashrom</span> <span class="o">-</span><span class="n">p</span> <span class="n">ft2232_spi</span><span class="p">:</span><span class="nb">type</span><span class="o">=</span><span class="mi">4232</span><span class="n">H</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="n">A</span> <span class="o">--</span><span class="n">layout</span> <span class="n">picochip</span><span class="o">.</span><span class="n">layout</span> <span class="o">--</span><span class="n">image</span> <span class="n">program</span> <span class="o">--</span><span class="n">write</span> <span class="n">concat</span><span class="o">.</span><span class="n">bin</span>
+</pre></div>
+</div>
+<p>This command only writes to the “program” section in the flash which was specified in the layout file as addresses from 0x00100000 (1MB) to 0x001fffff (2MB).</p>
+<p>Furthermore, we can verify the contents of the SPI flash by reading it and saving the results into a file:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">flashrom</span> <span class="o">-</span><span class="n">p</span> <span class="n">ft2232_spi</span><span class="p">:</span><span class="nb">type</span><span class="o">=</span><span class="mi">4232</span><span class="n">H</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="n">A</span> <span class="o">--</span><span class="n">read</span> <span class="n">verify</span><span class="o">.</span><span class="n">bin</span>
+</pre></div>
+</div>
+<p>Putting all the codes together, the following Makefile can be used:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">all</span><span class="p">:</span> <span class="n">layout</span> <span class="n">zeros</span> <span class="n">write</span> <span class="n">read</span>
+
+<span class="n">read</span><span class="p">:</span>
+        <span class="nd">@rm</span> <span class="o">-</span><span class="n">f</span> <span class="n">verify</span><span class="o">.</span><span class="n">bin</span>
+        <span class="n">flashrom</span> <span class="o">-</span><span class="n">p</span> <span class="n">ft2232_spi</span><span class="p">:</span><span class="nb">type</span><span class="o">=</span><span class="mi">4232</span><span class="n">H</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="n">A</span> <span class="o">--</span><span class="n">read</span> <span class="n">verify</span><span class="o">.</span><span class="n">bin</span>
+
+<span class="n">write</span><span class="p">:</span>
+        <span class="n">flashrom</span> <span class="o">-</span><span class="n">p</span> <span class="n">ft2232_spi</span><span class="p">:</span><span class="nb">type</span><span class="o">=</span><span class="mi">4232</span><span class="n">H</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="n">A</span> <span class="o">--</span><span class="n">layout</span> <span class="n">picochip</span><span class="o">.</span><span class="n">layout</span> <span class="o">--</span><span class="n">image</span> <span class="n">program</span> <span class="o">--</span><span class="n">write</span> <span class="n">concat</span><span class="o">.</span><span class="n">bin</span>
+
+
+<span class="n">truncate</span><span class="p">:</span>
+        <span class="n">truncate</span> <span class="o">-</span><span class="n">s</span> <span class="mi">16</span><span class="n">M</span> <span class="n">fw</span><span class="o">.</span><span class="n">bin</span>
+
+<span class="n">zeros</span><span class="p">:</span>
+        <span class="nd">@truncate</span> <span class="o">-</span><span class="n">s</span> <span class="mi">1</span><span class="n">M</span> <span class="n">zeros</span><span class="o">.</span><span class="n">bin</span>
+        <span class="nd">@cat</span> <span class="n">zeros</span><span class="o">.</span><span class="n">bin</span> <span class="n">picochip_fw</span><span class="o">.</span><span class="n">bin</span> <span class="o">&gt;</span> <span class="n">concat</span><span class="o">.</span><span class="n">bin</span>
+        <span class="nd">@truncate</span> <span class="o">-</span><span class="n">s</span> <span class="mi">16</span><span class="n">M</span> <span class="n">concat</span><span class="o">.</span><span class="n">bin</span>
+        <span class="nd">@rm</span> <span class="n">zeros</span><span class="o">.</span><span class="n">bin</span>
+
+<span class="n">layout</span><span class="p">:</span>
+        <span class="nd">@rm</span> <span class="o">-</span><span class="n">f</span> <span class="n">picochip</span><span class="o">.</span><span class="n">layout</span>
+        <span class="nd">@touch</span> <span class="n">picochip</span><span class="o">.</span><span class="n">layout</span>
+        <span class="nd">@echo</span> <span class="s2">&quot;00000000:000fffff start&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">picochip</span><span class="o">.</span><span class="n">layout</span>
+        <span class="nd">@echo</span> <span class="s2">&quot;00100000:001fffff program&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">picochip</span><span class="o">.</span><span class="n">layout</span>
+        <span class="nd">@echo</span> <span class="s2">&quot;00200000:00ffffff remainder&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">picochip</span><span class="o">.</span><span class="n">layout</span>
 </pre></div>
 </div>
 </div>

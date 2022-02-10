@@ -6,12 +6,14 @@ PicoChip
 ========
 
 Programming Picochip's Program Memory
-------------------
+-------------------------------------
 
-Generating the programmable file:
-^^^^^^^^^^^^^^^^^^^^^
+
+Generating the programmable file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Picochip uses the open-source PicoRV32 processor which implements the RISC-V RV32IMC Instruction Set. To generate the programmable file, an installation of the RISC-V GNU toolchain is required. The source files and instructions to install the toolchain can be found in `the RISC-V GNU Compiler Toolchain GitHub repository <https://github.com/riscv/riscv-gnu-toolchain>`_
-.
+. Make sure to install the toolchain for the 32bit ISA.
 
 After installing the compiler toolchain, the linker script file should be generated to tell the linker which addresses are used for the data memory and which are for the program memory. For this purpose, copy the following to a file named sections.lds:
 
@@ -24,7 +26,7 @@ After installing the compiler toolchain, the linker script file should be genera
 	#elif HX8KDEMO
 	#  define MEM_TOTAL 0x200 /* 2 KB */
 	#else
-	#  error "Set -DICEBREAKER or -DHX8KDEMO when compiling firmware.c"
+	#  error "Set -PICOCHIP or -DICEBREAKER or -DHX8KDEMO when compiling firmware.c"
 	#endif
 
 	MEMORY
@@ -290,11 +292,81 @@ The last file required to generate the final programmable binary is the boot cod
 	flashio_worker_end:
 
 
-Finally, to generate the binary file for a C code firmware.c, run the following commands. The final binary file will be generated in a file named picochip_fw.hex.
+Finally, to generate the binary file for a C code firmware.c, run the following commands. The final binary file will be generated in a file named picochip_fw.bin.
 
 
 .. code:: bash
 
     riscv32-unknown-elf-gcc  -D PICOCHIP -Dmarch=rv32ic -Wl,-Bstatic,-T,picochip_sections.lds,--strip-debug -ffreestanding -nostdlib -o picochip_fw.elf start.s firmware.c
-    riscv32-unknown-elf-objcopy -O verilog picochip_fw.elf picochip_fw.hex
+    riscv32-unknown-elf-objcopy -O binary picochip_fw.elf picochip_fw.bin
 
+Programming the SPI Flash
+^^^^^^^^^^^^^^^^^^^^^^^^^
+To program the flash, two main adjustments should be made to the binary file. First, the on-chip processor expects the first instruction to be located at 1MB deep in the SPI flash (address 0x00100000). Therefore, we need to add non-values (zeros) to the first 1MB part of the binary file. Second, the SPI flash used on picopcb (W25Q128JV-DTR) is 16MB deep. Therefore, we need to pad the binary file to be exactly 16MB. To make these adjustments, on Linux, we use the `truncate <https://www.man7.org/linux/man-pages/man1/truncate.1.html>`_ command as follows:
+
+.. code:: bash
+
+	truncate -s 1M zeros.bin
+	cat zeros.bin picochip_fw.bin > concat.bin
+	truncate -s 16M concat.bin
+	rm zeros.bin
+
+
+Using the above commands, we will have the new binary file (concat.bin) which is exactly 16MB and the starting code is at the address 0x00100000.
+
+
+To program the SPI flash (Picochip's program memory) on a Linux system, the `flashrom <https://linux.die.net/man/8/flashrom>`_ utility is used. In order to not write the entire 16MB of flash (and speed up the programming) we use a layout file (picochip.layout) as below:
+
+.. code:: bash
+
+	00000000:000fffff start
+	00100000:001fffff program
+	00200000:00ffffff remainder
+
+Finally, to write to the SPI flash, use the following command:
+
+
+.. code:: bash
+
+	flashrom -p ft2232_spi:type=4232H,port=A --layout picochip.layout --image program --write concat.bin
+
+This command only writes to the "program" section in the flash which was specified in the layout file as addresses from 0x00100000 (1MB) to 0x001fffff (2MB).
+
+Furthermore, we can verify the contents of the SPI flash by reading it and saving the results into a file:
+
+
+.. code:: bash
+
+	flashrom -p ft2232_spi:type=4232H,port=A --read verify.bin
+
+
+Putting all the codes together, the following Makefile can be used:
+
+
+.. code:: bash
+
+	all: layout zeros write read
+
+	read:
+		@rm -f verify.bin
+		flashrom -p ft2232_spi:type=4232H,port=A --read verify.bin
+
+	write:
+		flashrom -p ft2232_spi:type=4232H,port=A --layout picochip.layout --image program --write concat.bin
+
+
+	truncate:
+		truncate -s 16M fw.bin
+
+	zeros:
+		@truncate -s 1M zeros.bin
+		@cat zeros.bin picochip_fw.bin > concat.bin
+		@truncate -s 16M concat.bin
+		@rm zeros.bin
+
+	layout:
+		@rm -f picochip.layout
+		@touch picochip.layout
+		@echo "00000000:000fffff start" >> picochip.layout
+		@echo "00100000:001fffff program" >> picochip.layout
+		@echo "00200000:00ffffff remainder" >> picochip.layout
