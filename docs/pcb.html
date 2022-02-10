@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>PicoPCB &mdash; PicoPCB Test Platform  documentation</title>
+  <title>Saidoyoki_v1 &mdash; PicoPCB Test Platform  documentation</title>
   
 
   
@@ -29,7 +29,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="PicoChip" href="picochip.html" />
+    <link rel="next" title="Saidoyoki_v2" href="pcb2.html" />
     <link rel="prev" title="The PicoPCB Evaluation Board works" href="index.html" /> 
 
   
@@ -80,14 +80,14 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">PicoPCB</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Saidoyoki_v1</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jumper-settings">Jumper Settings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sna-connectors">SNA Connectors</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="pcb2.html">Saidoyoki_v2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="picochip.html">PicoChip</a></li>
-<li class="toctree-l1"><a class="reference internal" href="picochip.html#programming-picochip-s-program-memory">Programming Picochip’s Program Memory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="famev2.html">FAMEv2 Chip</a></li>
 </ul>
 
@@ -134,7 +134,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>PicoPCB</li>
+      <li>Saidoyoki_v1</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -153,13 +153,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="picopcb">
-<span id="pcb"></span><h1>PicoPCB<a class="headerlink" href="#picopcb" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="saidoyoki-v1">
+<span id="pcb"></span><h1>Saidoyoki_v1<a class="headerlink" href="#saidoyoki-v1" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>The PicoPCB is a test platform for two different chips: FAMEv2 and Picochip. PicoPCB provides the following support functionality for testing FAMEv2 and Picochip: progammable clock generation, power control, passive power measurement, flash programming, user UART.</li>
-<li>PicoPCB has some initial configurations have to be made before the power up. These configurations decide several modes of operation. The configurations are power supply mode, clocking mode, FAMEv2 booting, flasing the chips and setting the UART channels. These configurations are made with switcher headers. Switching can be made by shorting the necessary two headers on the connector as shown in the following figure. Each of these headers are also explained below. Ayntime when the user wants to change a direction of a switching header, the PicoPCB should be turned off and should be turned on after making the changes.</li>
+<li>The Saidoyoki_v1 is a test platform for two different chips: FAMEv2 and Picochip. Saidoyoki_v1 provides the following support functionality for testing FAMEv2 and Picochip: progammable clock generation, power control, passive power measurement, flash programming, user UART.</li>
+<li>Saidoyoki_v1 has some initial configurations have to be made before the power up. These configurations decide several modes of operation. The configurations are power supply mode, clocking mode, FAMEv2 booting, flasing the chips and setting the UART channels. These configurations are made with switcher headers. Switching can be made by shorting the necessary two headers on the connector as shown in the following figure. Each of these headers are also explained below. Ayntime when the user wants to change a direction of a switching header, the Saidoyoki_v1 should be turned off and should be turned on after making the changes.</li>
 </ul>
 <div class="figure align-center" id="id1" style="width: 600px">
 <img alt="_images/shorting.png" src="_images/shorting.png" />
@@ -167,25 +167,25 @@
 </div>
 <ul class="simple">
 <li>Before the power up, at least the following configurations must be done: power mode, clocking and chip flashing.</li>
-<li>PicoPCB has two regulators supplying the board. These regulators provide 3.3V and 1.8V outputs. 3.3V output is used for chip I/Os and the rest of the board while the 1.8V output is used for chip cores. 1.8V output is configurable using a switching header and a potentiometer. The output is fixed to 1.8V as default. When the user wants to supply the chip cores other than a 1.8V output, the shorting jumper should be placed leftward and the output voltage can be adjusted between 1V and 2V using the potentiometer with a screwdriver. In either case, there MUST be a shorting jumper on this switching header, otherwise the output will be floating.</li>
+<li>Saidoyoki_v1 has two regulators supplying the board. These regulators provide 3.3V and 1.8V outputs. 3.3V output is used for chip I/Os and the rest of the board while the 1.8V output is used for chip cores. 1.8V output is configurable using a switching header and a potentiometer. The output is fixed to 1.8V as default. When the user wants to supply the chip cores other than a 1.8V output, the shorting jumper should be placed leftward and the output voltage can be adjusted between 1V and 2V using the potentiometer with a screwdriver. In either case, there MUST be a shorting jumper on this switching header, otherwise the output will be floating.</li>
 <li>Picochip has two clock sources that can be swithced between for different applications. One clock source is an SMA connector. This connector is able to supply both chips. In order to supply a chip using this connector, the user should place a shorting jumper downwards on the the related swithcer header. Also, placing the jumper upwards means the chip is supplied from the clocking IC. There is a switcher header for each chip. On the clocking IC, two different clock channels supply each of these swithces. On the other hand, one SMA connector supplies both switches.</li>
-<li>PicoPCB has an FTDI FT4232HL USB bridge to handle the clocking IC configuration, user UART communication, DSU UART communication and flash ICs configurations. The configuration of the clocking IC is made via an I2C line, FTDI is able to provide necessary I2C transactions with its MPSSE engine to set the clocking IC. Another FTDI channel is the one that is used for user UART communications from both chips, this is a single channel and must be configured using the swithces to select the communicating chip. One other channel is used for DSU UART of FAMEv2 chip. As the FAMEv2 has two DSU UARTs there are two swiching headers to select the one for communication. The last cannel of the FTDI is used for flash ICs. This line is an SPI line supplying both chips. When the user wants to load a program into a flash IC, the switcing headers around that flash IC must be shorted in the direction of FT signs (if the switching headers are shorted in the direction of FLASH signs, this means that the flash IC is connected to the chip(FAME of PICO) instead of the FTDI device). This will connect that flash IC to the FT device. While making these configurations at one side of the PCB, the shorting jumpers around the other flash IC must be completely removed to keep that IC out of the communication.</li>
-<li>PicoPCB Schematics: <a class="reference download internal" href="_downloads/pico_pcb_1.0.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">PDF</span></code></a></li>
+<li>Saidoyoki_v1 has an FTDI FT4232HL USB bridge to handle the clocking IC configuration, user UART communication, DSU UART communication and flash ICs configurations. The configuration of the clocking IC is made via an I2C line, FTDI is able to provide necessary I2C transactions with its MPSSE engine to set the clocking IC. Another FTDI channel is the one that is used for user UART communications from both chips, this is a single channel and must be configured using the swithces to select the communicating chip. One other channel is used for DSU UART of FAMEv2 chip. As the FAMEv2 has two DSU UARTs there are two swiching headers to select the one for communication. The last cannel of the FTDI is used for flash ICs. This line is an SPI line supplying both chips. When the user wants to load a program into a flash IC, the switcing headers around that flash IC must be shorted in the direction of FT signs (if the switching headers are shorted in the direction of FLASH signs, this means that the flash IC is connected to the chip(FAME of PICO) instead of the FTDI device). This will connect that flash IC to the FT device. While making these configurations at one side of the PCB, the shorting jumpers around the other flash IC must be completely removed to keep that IC out of the communication.</li>
+<li>Saidoyoki_v1 Schematics: <a class="reference download internal" href="_downloads/pico_pcb_1.0.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">PDF</span></code></a></li>
 </ul>
 <div class="figure align-center" id="id2" style="width: 600px">
 <img alt="_images/pcbblockdiagram.png" src="_images/pcbblockdiagram.png" />
-<p class="caption"><span class="caption-text">PicoPCB Block Diagram</span></p>
+<p class="caption"><span class="caption-text">Saidoyoki_v1 Block Diagram</span></p>
 </div>
 <div class="figure align-center" id="id3" style="width: 600px">
 <img alt="_images/picopcb.png" src="_images/picopcb.png" />
-<p class="caption"><span class="caption-text">PicoPCB Top Layer View</span></p>
+<p class="caption"><span class="caption-text">Saidoyoki_v1 Top Layer View</span></p>
 </div>
 </div>
 <div class="section" id="jumper-settings">
 <h2>Jumper Settings<a class="headerlink" href="#jumper-settings" title="Permalink to this headline">¶</a></h2>
 <div class="figure align-center" id="id4" style="width: 600px">
 <img alt="_images/picojumper.png" src="_images/picojumper.png" />
-<p class="caption"><span class="caption-text">PicoPCB Jumper Locations</span></p>
+<p class="caption"><span class="caption-text">Saidoyoki_v1 Jumper Locations</span></p>
 </div>
 <table border="1" class="docutils">
 <colgroup>
@@ -390,7 +390,7 @@
 <h2>SNA Connectors<a class="headerlink" href="#sna-connectors" title="Permalink to this headline">¶</a></h2>
 <div class="figure align-center" id="id5" style="width: 600px">
 <img alt="_images/picosna.png" src="_images/picosna.png" />
-<p class="caption"><span class="caption-text">PicoPCB SNA Locations</span></p>
+<p class="caption"><span class="caption-text">Saidoyoki_v1 SNA Locations</span></p>
 </div>
 <table border="1" class="docutils">
 <colgroup>
@@ -479,7 +479,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="picochip.html" class="btn btn-neutral float-right" title="PicoChip" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pcb2.html" class="btn btn-neutral float-right" title="Saidoyoki_v2" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="The PicoPCB Evaluation Board works" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -1,0 +1,520 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Saidoyoki_v2 &mdash; PicoPCB Test Platform  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PicoChip" href="picochip.html" />
+    <link rel="prev" title="Saidoyoki_v1" href="pcb.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> PicoPCB Test Platform
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="pcb.html">Saidoyoki_v1</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Saidoyoki_v2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#headers-and-switches">Headers and Switches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sma-connectors">SMA Connectors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="picochip.html">PicoChip</a></li>
+<li class="toctree-l1"><a class="reference internal" href="famev2.html">FAMEv2 Chip</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PicoPCB Test Platform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Saidoyoki_v2</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pcb2.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="saidoyoki-v2">
+<span id="pcb2"></span><h1>Saidoyoki_v2<a class="headerlink" href="#saidoyoki-v2" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Saidoyoki_v2 is an improved version of v1. This board is used to accomodate two in-house designed chips, PicoChip and Famev2, and monitor their cryptographic operations to impelement secure hardware experiments. This manual provides information on Saidoyoki_v2’s capabilities and hardware configurations. To get help for programming, please refer to the repository picochip_pcb_saidoyoki_2 of Secure-Embedded-Systems Github page.</li>
+<li>Getting Started with the Hardware: Saidoyoki_v2 is a highly configurable side-channel test platform. It has two chips with a variety of cryptographic co-proccesors namely, three different versions of AES and ASCON. With these features, The board allows the user to work with both hardware and software implementations of these ciphers. The board is powered with a 5V DC input supply. This supply can be inputted either using a barrel jack or the screw terminal that is connected parallel to it. The board has four different voltage regulators. Each of those regulators have specific targets. Saidoyoki_v2’s another strong feature is its easy connection with a host device. An FTDI FT4232h USB bridge handles all needed communication with the host device. This bridge has four channels that communicates with several devices on the board. The first channel is used for programming the flash memory chips of Fame and Pico, the second one is used to hold the communication with the clock generator chip. The other two ports are used to communicate with the Fame’s and Pico’s user or debug ports. Saidoyoki_v2 provides two ways for power measurement. For each chip, the board has a current probe port with an enable switch and a signal amplifier with several shunt resistor options. The rest of this document explains each of these features individually.</li>
+</ul>
+<div class="figure align-center" id="id1" style="width: 600px">
+<img alt="_images/saidoyoki_v2.jpg" src="_images/saidoyoki_v2.jpg" />
+<p class="caption"><span class="caption-text">Saidoyoki_v2</span></p>
+</div>
+<div class="figure align-center" id="id2" style="width: 600px">
+<img alt="_images/block.png" src="_images/block.png" />
+<p class="caption"><span class="caption-text">Simple block diagram</span></p>
+</div>
+<ul class="simple">
+<li>Power: Power input for Saidoyoki_v2 board should be a 5V DC and shuold be connecter from either the barrel jack input or from the screw terminal next to it. With the power switch, this input voltage can be delivered to the board or keep it off. Saidoyoki_v2 has four different voltage regulators. Two of those regulators are fixed to 3.3V and 1.8V, these regulators are used to supply general devices on the board. The other two regulators are dedicated to supply core voltages for pico and fame chips. The core supply regulators can either be set to supply 1.8V or to supply an adjustable voltage. This setting can be done using SW2 or SW3. When these swithces are set to FIX they will supply a fixed 1.8V. When they are set to ADJ, the core supply voltage for each chip can be set between 1V and 2V using the adjacent potentiometer using a screw driver.</li>
+<li>Clock Settings: Saidoyoki_v2 has one internal and one external clock source. The external clock source is an SMA connector while the internal clock source is a clock generator chip. The clock signal from one of these sources can be routed to the chips using the header swithces P29 and P30. Among those header switches, the one close to the pico is used to route clock for pico and the other one is used to route clock for fame. Clock source for each chip can be set individually. When the header switch of the pico is set upwards, pico gets its clock from the generator, when it is set downwards, it gets its clock from the SMA connector. Same method applies for fame too. The clock generation chip is Texas Instruments CDCE925PWR and it is capable of generating clock signal up to 200MHz. This chip is connected to the USB bridge with I2C and programmed by it. The chip has an internal EEPROM to store a default setting. This default setting or the current clock settings can be changed by program. To get help for programming, please refer to the repository picochip_pcb_saidoyoki_2 of Secure-Embedded-Systems Github page. P26 is used to supply output voltage for the clock generator, as usual this header must be set downwards. In case of a program disables the I2C lines, these lines can be set as an I2C again temprorarily by shorting this header upwards. P28 is the user input S0 of the chip. This port is internally pulled up and used by pulling down with a jumper. A function for this port can be assigned by the program, if needed. For more detail, please refer to the chip’s datasheet. Following figure shows the headers around the clock generator.</li>
+</ul>
+<div class="figure align-center" id="id3" style="width: 600px">
+<img alt="_images/clocking_ic.PNG" src="_images/clocking_ic.PNG" />
+<p class="caption"><span class="caption-text">Headers around CDCE925</span></p>
+</div>
+<ul class="simple">
+<li>Host Device Connection: Saidoyoki_v2 is connected to a host device (usually a linux-based computer) with a microUSB cable. An FTDI FT4232h chip is used to make this possible. This chip has four channels and these ports are used as SPI-flash programming, I2C-Clock Programming, UART-pico/fame user interface, UART-fame debug interface, respectively. When programming a flash chip, the switches of that flash chip should be set to FT and the switches of the other flash chip needs to be set to FLASH. When these switches are set to FT, this means the flash chip is connected to the FT4232h, when they are set to FLASH, this means the flash chip is connected to the chip as a flash memory. Headers P19, P27, P15, P16, P20 and P21 can be used to monitor the serial communications on all four channels of the FT4232h. To get help for programming, please refer to the repository picochip_pcb_saidoyoki_2 of Secure-Embedded-Systems Github page.</li>
+<li>Power Measurement: Saidoyoki_v2 provides two different power measurement methods for each cryptographic chip it has. The first method is current probing. The core supply votage of each chip has a switch that breaks the circuit, routes the current to one port of a screw terminal and the other port of the screw terminal completes the circuit with an incoming current. By this method the power is measured off-the-board. Current probe switch is used to enable or disable this feature. When the switch is set to OFF. The circuit is never broken and the current is delivered to the next device. The other method is a signal amplifier with a shunt resistor. This method is on as a default and it is not effected by the current probe. User can select one of four shunt resistors (0.1 ohm, 1 ohm, 4.7 ohm, 10 ohms or short circuit) and use the signal amplifier (BGA2801) with the SMA connector. Following diagrams illustrates both methods.</li>
+</ul>
+<div class="figure align-center" id="id4" style="width: 600px">
+<img alt="_images/shunts.PNG" src="_images/shunts.PNG" />
+<p class="caption"><span class="caption-text">Configurable shunt resistors</span></p>
+</div>
+<div class="figure align-center" id="id5" style="width: 600px">
+<img alt="_images/cur_probes.PNG" src="_images/cur_probes.PNG" />
+<p class="caption"><span class="caption-text">Current probe terminals</span></p>
+</div>
+<ul class="simple">
+<li>General jumper settings can be seen as in the following figure.</li>
+</ul>
+<div class="figure align-center" id="id6" style="width: 600px">
+<img alt="_images/shorting.png" src="_images/shorting.png" />
+<p class="caption"><span class="caption-text">General switch header shortings</span></p>
+</div>
+<ul class="simple">
+<li>Saidoyoki_v2 Schematics: <a class="reference download internal" href="_downloads/saidoyoki_v2_schematics.PDF" download=""><code class="xref download docutils literal notranslate"><span class="pre">PDF</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="headers-and-switches">
+<h2>Headers and Switches<a class="headerlink" href="#headers-and-switches" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center" id="id7" style="width: 600px">
+<img alt="_images/header_cons.png" src="_images/header_cons.png" />
+<p class="caption"><span class="caption-text">Saidoyoki_v2 important headers and switches.</span></p>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="15%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Symbol</th>
+<th class="head">Pins</th>
+<th class="head">Function</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>P1</td>
+<td>2</td>
+<td>5v barrel connector 2.5x5.5mm</td>
+</tr>
+<tr class="row-odd"><td>P2</td>
+<td>2</td>
+<td>5v input screw terminal</td>
+</tr>
+<tr class="row-even"><td>P3</td>
+<td>2x6</td>
+<td>PICO GPIO pins</td>
+</tr>
+<tr class="row-odd"><td>P4</td>
+<td>2x9</td>
+<td>PICO SPI pins</td>
+</tr>
+<tr class="row-even"><td>P5</td>
+<td>2x6</td>
+<td>PICO RO control interface</td>
+</tr>
+<tr class="row-odd"><td>P6</td>
+<td>3</td>
+<td>PICO Flash ext access bits d2 d3</td>
+</tr>
+<tr class="row-even"><td>P7</td>
+<td>3</td>
+<td>PICO TRNG and RO ST</td>
+</tr>
+<tr class="row-odd"><td>P8</td>
+<td>NA</td>
+<td>NA</td>
+</tr>
+<tr class="row-even"><td>P9</td>
+<td>2</td>
+<td>PICO Test Enable</td>
+</tr>
+<tr class="row-odd"><td>P10</td>
+<td>2x5</td>
+<td>FAME ALARM pins</td>
+</tr>
+<tr class="row-even"><td>P11</td>
+<td>2x4</td>
+<td>FAME GPIO pins</td>
+</tr>
+<tr class="row-odd"><td>P12</td>
+<td>4</td>
+<td>FAME CHECK pins</td>
+</tr>
+<tr class="row-even"><td>P13</td>
+<td>2x3</td>
+<td>FAME SCAN and WDOG pins</td>
+</tr>
+<tr class="row-odd"><td>P14</td>
+<td>2x4</td>
+<td>FAME TRIG pins</td>
+</tr>
+<tr class="row-even"><td>P15</td>
+<td>3</td>
+<td>FAME DSU UART rx select</td>
+</tr>
+<tr class="row-odd"><td>P16</td>
+<td>3</td>
+<td>FAME DSU UART tx select</td>
+</tr>
+<tr class="row-even"><td>P17</td>
+<td>3</td>
+<td>FAME flash reset</td>
+</tr>
+<tr class="row-odd"><td>P18</td>
+<td>NA</td>
+<td>USB micro b</td>
+</tr>
+<tr class="row-even"><td>P19</td>
+<td>2x3</td>
+<td>FTDI SPI external access</td>
+</tr>
+<tr class="row-odd"><td>P20</td>
+<td>3</td>
+<td>USR UART tx select</td>
+</tr>
+<tr class="row-even"><td>P21</td>
+<td>3</td>
+<td>USR UART tx select</td>
+</tr>
+<tr class="row-odd"><td>P22</td>
+<td>2x5</td>
+<td>FAME shunt resistor select</td>
+</tr>
+<tr class="row-even"><td>P23</td>
+<td>2</td>
+<td>FAME current probe screw terminal</td>
+</tr>
+<tr class="row-odd"><td>P24</td>
+<td>2x5</td>
+<td>PICO shunt resistor select</td>
+</tr>
+<tr class="row-even"><td>P25</td>
+<td>2</td>
+<td>PICO current probe screw terminal</td>
+</tr>
+<tr class="row-odd"><td>P26</td>
+<td>3</td>
+<td>Clock IC output voltage select</td>
+</tr>
+<tr class="row-even"><td>P27</td>
+<td>3</td>
+<td>FTDI I2C external access</td>
+</tr>
+<tr class="row-odd"><td>P28</td>
+<td>2</td>
+<td>Clock IC user pin S0</td>
+</tr>
+<tr class="row-even"><td>P29</td>
+<td>3</td>
+<td>PICO clock select</td>
+</tr>
+<tr class="row-odd"><td>P30</td>
+<td>3</td>
+<td>PICO clock select</td>
+</tr>
+<tr class="row-even"><td>P31</td>
+<td>2</td>
+<td>Reset jumper</td>
+</tr>
+<tr class="row-odd"><td>SW1</td>
+<td>NA</td>
+<td>ON/OFF switch</td>
+</tr>
+<tr class="row-even"><td>SW2</td>
+<td>NA</td>
+<td>FAME regulator FIX/ADJ select</td>
+</tr>
+<tr class="row-odd"><td>SW3</td>
+<td>NA</td>
+<td>FAME regulator FIX/ADJ select</td>
+</tr>
+<tr class="row-even"><td>SW4</td>
+<td>NA</td>
+<td>PICO flash CK FT/FAME select</td>
+</tr>
+<tr class="row-odd"><td>SW5</td>
+<td>NA</td>
+<td>PICO flash CS FT/FAME select</td>
+</tr>
+<tr class="row-even"><td>SW6</td>
+<td>NA</td>
+<td>PICO flash D0 FT/FAME select</td>
+</tr>
+<tr class="row-odd"><td>SW7</td>
+<td>NA</td>
+<td>PICO flash D1 FT/FAME select</td>
+</tr>
+<tr class="row-even"><td>SW8</td>
+<td>NA</td>
+<td>FAME flash CK FT/FAME select</td>
+</tr>
+<tr class="row-odd"><td>SW9</td>
+<td>NA</td>
+<td>FAME flash CS FT/FAME select</td>
+</tr>
+<tr class="row-even"><td>SW10</td>
+<td>NA</td>
+<td>FAME flash D0 FT/FAME select</td>
+</tr>
+<tr class="row-odd"><td>SW11</td>
+<td>NA</td>
+<td>FAME flash D1 FT/FAME select</td>
+</tr>
+<tr class="row-even"><td>SW12</td>
+<td>NA</td>
+<td>FAME current probe select</td>
+</tr>
+<tr class="row-odd"><td>SW13</td>
+<td>NA</td>
+<td>PICO current probe select</td>
+</tr>
+<tr class="row-even"><td>SW14</td>
+<td>NA</td>
+<td>NA</td>
+</tr>
+<tr class="row-odd"><td>SW15</td>
+<td>NA</td>
+<td>FAME boot select</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="sma-connectors">
+<h2>SMA Connectors<a class="headerlink" href="#sma-connectors" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center" id="id8" style="width: 600px">
+<img alt="_images/sma_cons.png" src="_images/sma_cons.png" />
+<p class="caption"><span class="caption-text">Saidoyoki_v2 SMA Locations</span></p>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Symbol</th>
+<th class="head">Function</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>J1</td>
+<td>FAME core supply before shunt</td>
+</tr>
+<tr class="row-odd"><td>J2</td>
+<td>FAME core supply after shunt</td>
+</tr>
+<tr class="row-even"><td>J3</td>
+<td>FAME AMP OUT</td>
+</tr>
+<tr class="row-odd"><td>J4</td>
+<td>PICO core supply before shunt</td>
+</tr>
+<tr class="row-even"><td>J5</td>
+<td>PICO core supply after shunt</td>
+</tr>
+<tr class="row-odd"><td>J6</td>
+<td>PICO AMP OUT</td>
+</tr>
+<tr class="row-even"><td>J7</td>
+<td>SMA clock input</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="picochip.html" class="btn btn-neutral float-right" title="PicoChip" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pcb.html" class="btn btn-neutral" title="Saidoyoki_v1" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Vernam Lab.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
